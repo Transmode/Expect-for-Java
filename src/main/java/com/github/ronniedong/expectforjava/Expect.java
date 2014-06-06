@@ -1,3 +1,5 @@
+package com.github.ronniedong.expectforjava;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -200,19 +202,19 @@ public class Expect {
 			RETV_IOEXCEPTION = -9;
 	
 	/**
-	 * Convenience method, same as calling {@link #expect(int, Object...)
+	 * Convenience method, same as calling {@link #expectTimeout(int, Object...)
 	 * expect(default_timeout, patterns)}
 	 * 
 	 * @param patterns
 	 * @return
 	 */
 	public int expect(Object... patterns) {
-		return expect(default_timeout, patterns);
+		return expectTimeout(default_timeout, patterns);
 	}
 
 	/**
 	 * Convenience method, internally it constructs a List{@literal <Pattern>}
-	 * using the object array, and call {@link #expect(int, List) } using the
+	 * using the object array, and call {@link #expectTimeout(int, List) } using the
 	 * List. The {@link String}s in the object array will be treated as
 	 * literals; meanwhile {@link Pattern}s will be directly added to the List.
 	 * If the array contains other objects, they will be converted by
@@ -221,7 +223,7 @@ public class Expect {
 	 * @param patterns
 	 * @return
 	 */
-	public int expect(int timeout, Object... patterns) {
+	public int expectTimeout(int timeout, Object... patterns) {
 		ArrayList<Pattern> list = new ArrayList<Pattern>();
 		for (Object o : patterns) {
 			if (o instanceof String)
@@ -235,7 +237,7 @@ public class Expect {
 				list.add(Pattern.compile(Pattern.quote(o.toString())));
 			}
 		}
-		return expect(timeout, list);
+		return expectTimeout(timeout, list);
 	}
 	
 	/**
@@ -254,7 +256,7 @@ public class Expect {
 	 *         0); or a negative number if there is an IOException, EOF or
 	 *         timeout
 	 */
-	public int expect(int timeout, List<Pattern> list) {
+	public int expectTimeout(int timeout, List<Pattern> list) {
 		log.debug("Expecting " + list);
 		
 		clearGlobalVariables();
@@ -323,18 +325,18 @@ public class Expect {
 	}
 
 	/**
-	 * Convenience method, internally it calls {@link #expect(int, List)
+	 * Convenience method, internally it calls {@link #expectTimeout(int, List)
 	 * expect(timeout, new ArrayList&lt;Pattern&gt;())}. Given an empty list,
-	 * {@link #expect(int, List)} will not perform any regex matching, therefore
+	 * {@link #expectTimeout(int, List)} will not perform any regex matching, therefore
 	 * the only conditions for it to return is EOF or timeout (or IOException).
 	 * If EOF is detected, {@link #isSuccess} and {@link #before} are properly
 	 * set.
 	 * 
 	 * @param timeout
-	 * @return same as return value of {@link #expect(int, List)}
+	 * @return same as return value of {@link #expectTimeout(int, List)}
 	 */
 	public int expectEOF(int timeout) {
-		int retv = expect(timeout, new ArrayList<Pattern>());
+		int retv = expectTimeout(timeout, new ArrayList<Pattern>());
 		if (retv == RETV_EOF) {
 			this.isSuccess = true;
 			this.before = this.buffer.toString();
@@ -366,11 +368,11 @@ public class Expect {
 		return expectEOFOrThrow(default_timeout);
 	}
 
-	/**useful when calling {@link #expectOrThrow(int, Object...)}*/
+	/**useful when calling {@link #expectOrThrowTimeout(int, Object...)}*/
 	private IOException thrownIOE;
 	
 	/**
-	 * This method calls {@link #expect(int, Object...) expect(timeout,
+	 * This method calls {@link #expectTimeout(int, Object...) expect(timeout,
 	 * patterns)}, and throws checked exceptions when expect was not successful.
 	 * Useful when you want to simplify error handling: for example, when you
 	 * send a series of commands to an SSH server, you expect a prompt after
@@ -386,11 +388,11 @@ public class Expect {
 	 *             when EOF is encountered
 	 * @throws IOException
 	 *             when there is a problem reading from the InputStream
-	 * @return same as {@link #expect(int, Object...) expect(timeout, patterns)}
+	 * @return same as {@link #expectTimeout(int, Object...) expect(timeout, patterns)}
 	 */
-	public int expectOrThrow(int timeout, Object... patterns)
+	public int expectOrThrowTimeout(int timeout, Object... patterns)
 			throws TimeoutException, EOFException, IOException {
-		int retv = expect(timeout, patterns);
+		int retv = expectTimeout(timeout, patterns);
 		switch (retv) {
 		case RETV_TIMEOUT:
 			throw new TimeoutException();
@@ -402,11 +404,11 @@ public class Expect {
 			return retv;
 		}
 	}
-	/**Convenience method, same as calling {@link #expectOrThrow(int, Object...)
+	/**Convenience method, same as calling {@link #expectOrThrowTimeout(int, Object...)
 	 * expectOrThrow(default_timeout, patterns)}*/
 	public int expectOrThrow(Object... patterns) throws TimeoutException,
 			EOFException, IOException {
-		return expectOrThrow(default_timeout, patterns);
+		return expectOrThrowTimeout(default_timeout, patterns);
 	}
 	
 	private void clearGlobalVariables() {

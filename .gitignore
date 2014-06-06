@@ -1,4 +1,11 @@
 *.class
+*.iml
+.gradle
+.idea
+build
+.project
+.classpath
+.settings
 
 # Package Files #
 *.jar

@@ -1,3 +1,5 @@
+package com.github.ronniedong.expectforjava;
+
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -73,13 +75,13 @@ public class TestExpect {
 		
 		Expect.addLogToConsole(Level.ALL);
 		
-		Expect expect = new Expect(in, new NullOutputStream());
-		expect.expect(10, Pattern.compile(".*llo"));
+		final Expect expect = new Expect(in, new NullOutputStream());
+		expect.expectTimeout(10, Pattern.compile(".*llo"));
 		assertEquals("hello", expect.match);
-		int retv = expect.expect(5, "world");
+		int retv = expect.expectTimeout(5, "world");
 		assertNull(expect.match);
 		assertEquals(retv, Expect.RETV_TIMEOUT);
-		expect.expect(20, "world");
+		expect.expectTimeout(20, "world");
 		assertEquals("world", expect.match);
 		expect.expectEOF(60);
 		assertTrue(expect.isSuccess);
@@ -138,8 +140,8 @@ public class TestExpect {
 			}
 		}).start();
 		
-		Expect expect = new Expect(in, new NullOutputStream());
-		int retv = expect.expect(1, "world");
+		final Expect expect = new Expect(in, new NullOutputStream());
+		int retv = expect.expectTimeout(1, "world");
 		assertNull(expect.match);
 		assertEquals(retv, Expect.RETV_TIMEOUT);
 		//expect.expect(100, "world");
@@ -187,7 +189,7 @@ public class TestExpect {
 		
 		Expect expect = new Expect(in, new NullOutputStream());
 		expect.setRestart_timeout_upon_receive(true);
-		expect.expect(10, "!");
+		expect.expectTimeout(10, "!");
 		assertEquals("!", expect.match);
 		expect.close();
 	}
@@ -218,14 +220,14 @@ public class TestExpect {
 			}
 		}).start();
 		
-		Expect expect = new Expect(in, new NullOutputStream());
+		final Expect expect = new Expect(in, new NullOutputStream());
 		expect.setNotransfer(true);
 		expect.expect("hello");
 		assertEquals("hello", expect.match);
 		expect.expect("hello");
 		assertEquals("hello", expect.match);
 		expect.setNotransfer(false);
-		expect.expect(5, "hello");
+		expect.expectTimeout(5, "hello");
 		assertEquals("hello", expect.match);
 		expect.expect("hello");
 		assertNull(expect.match);
@@ -265,7 +267,7 @@ public class TestExpect {
 		
 		Expect.addLogToConsole(Level.ALL);
 		
-		Expect expect = new Expect(in, new NullOutputStream());
+		final Expect expect = new Expect(in, new NullOutputStream());
 		int retv = expect.expect(Pattern.compile(".*llo"), " wor");
 		assertEquals("hello", expect.match);
 		assertEquals(retv, 0);
@@ -311,7 +313,7 @@ public class TestExpect {
 		}).start();
 		
 		
-		Expect expect = new Expect(in, new NullOutputStream());
+		final Expect expect = new Expect(in, new NullOutputStream());
 		
 		int retv = expect.expectEOF();
 		assertEquals(retv, Expect.RETV_EOF);
@@ -358,7 +360,7 @@ public class TestExpect {
 		}).start();
 		
 		
-		Expect expect = new Expect(in, new NullOutputStream());
+		final Expect expect = new Expect(in, new NullOutputStream());
 		
 		expect.expectOrThrow("nomatch");
 		expect.expectEOF();
@@ -399,9 +401,9 @@ public class TestExpect {
 		}).start();
 		
 		
-		Expect expect = new Expect(in, new NullOutputStream());
+		final Expect expect = new Expect(in, new NullOutputStream());
 		
-		expect.expectOrThrow(5, "hello");
+		expect.expectOrThrowTimeout(5, "hello");
 		expect.expectEOF();
 		
 		expect.close();
