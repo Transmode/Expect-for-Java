@@ -17,6 +17,7 @@ repositories { mavenCentral() }
 dependencies {
     compile 'log4j:log4j:1.2.17'
     testCompile 'junit:junit:4.8.2'
+	testCompile 'org.jvnet.hudson:ganymed-ssh-2:build260'
 }
 
 group = 'com.github.ronniedong.expectforjava'
